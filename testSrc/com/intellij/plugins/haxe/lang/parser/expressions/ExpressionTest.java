@@ -74,4 +74,28 @@ public class ExpressionTest extends HaxeParsingTestBase {
   public void testNew() throws Throwable {
     doTest(true);
   }
+
+  public void testOperatorLeftShift() throws Throwable {
+    doTest(true);
+  }
+
+  public void testOperatorLeftShiftAssignment() throws Throwable {
+    doTest(true);
+  }
+
+  public void testOperatorRightShift() throws Throwable {
+    doTest(true);
+  }
+
+  public void testOperatorRightShiftAssignment() throws Throwable {
+    doTest(true);
+  }
+
+  public void testOperatorUnsignedRightShift() throws Throwable {
+    doTest(true);
+  }
+
+  public void testOperatorUnsignedRightShiftAssignment() throws Throwable {
+    doTest(true);
+  }
 }

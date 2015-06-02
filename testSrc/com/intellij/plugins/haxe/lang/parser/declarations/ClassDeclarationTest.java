@@ -57,4 +57,8 @@ public class ClassDeclarationTest extends DeclarationTestBase {
   public void testFullOfMacro() throws Throwable {
     doTest(true);
   }
+
+  public void testGeneric() throws Throwable {
+    doTest(true);
+  }
 }
