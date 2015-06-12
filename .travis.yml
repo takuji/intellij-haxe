@@ -1,6 +1,6 @@
 language: java
 jdk:
-- oraclejdk7
+- openjdk6
 before_script:
 - sudo add-apt-repository ppa:eyecreate/haxe -y
 - sudo apt-get update
