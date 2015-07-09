@@ -27,12 +27,9 @@ import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.apache.log4j.Level;
-
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Created by srikanthg on 10/9/14.
@@ -198,10 +195,13 @@ public abstract class HaxePsiFieldImpl extends AbstractHaxeNamedComponent implem
       list.setModifierProperty(HaxePsiModifier.STATIC, true);
     }
 
+    if (isInline()) {
+      list.setModifierProperty(HaxePsiModifier.INLINE, true);
+    }
+
     if (isPublic()) {
       list.setModifierProperty(HaxePsiModifier.PUBLIC, true);
-    }
-    else {
+    } else {
       list.setModifierProperty(HaxePsiModifier.PRIVATE, true);
     }
 
