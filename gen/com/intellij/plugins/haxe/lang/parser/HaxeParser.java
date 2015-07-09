@@ -820,7 +820,7 @@ public class HaxeParser implements PsiParser {
     if (!recursion_guard_(b, l, "assignExpression")) return false;
     if (!nextTokenIs(b, "<assign expression>", OREMAINDER_ASSIGN, OBIT_AND_ASSIGN,
       OMUL_ASSIGN, OPLUS_ASSIGN, OMINUS_ASSIGN, OQUOTIENT_ASSIGN, OSHIFT_LEFT_ASSIGN, OASSIGN,
-      OGREATER, OBIT_XOR_ASSIGN, OBIT_OR_ASSIGN)) return false;
+      OSHIFT_RIGHT_ASSIGN, OUNSIGNED_SHIFT_RIGHT_ASSIGN, OBIT_XOR_ASSIGN, OBIT_OR_ASSIGN)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _LEFT_, "<assign expression>");
     r = assignOperation(b, l + 1);
@@ -855,12 +855,12 @@ public class HaxeParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | ('>' '>' '=') | ('>' '>' '>' '=')
+  // '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=' | '>>>='
   public static boolean assignOperation(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assignOperation")) return false;
     if (!nextTokenIs(b, "<assign operation>", OREMAINDER_ASSIGN, OBIT_AND_ASSIGN,
       OMUL_ASSIGN, OPLUS_ASSIGN, OMINUS_ASSIGN, OQUOTIENT_ASSIGN, OSHIFT_LEFT_ASSIGN, OASSIGN,
-      OGREATER, OBIT_XOR_ASSIGN, OBIT_OR_ASSIGN)) return false;
+      OSHIFT_RIGHT_ASSIGN, OUNSIGNED_SHIFT_RIGHT_ASSIGN, OBIT_XOR_ASSIGN, OBIT_OR_ASSIGN)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<assign operation>");
     r = consumeToken(b, OASSIGN);
@@ -873,34 +873,9 @@ public class HaxeParser implements PsiParser {
     if (!r) r = consumeToken(b, OBIT_OR_ASSIGN);
     if (!r) r = consumeToken(b, OBIT_XOR_ASSIGN);
     if (!r) r = consumeToken(b, OSHIFT_LEFT_ASSIGN);
-    if (!r) r = assignOperation_10(b, l + 1);
-    if (!r) r = assignOperation_11(b, l + 1);
+    if (!r) r = consumeToken(b, OSHIFT_RIGHT_ASSIGN);
+    if (!r) r = consumeToken(b, OUNSIGNED_SHIFT_RIGHT_ASSIGN);
     exit_section_(b, l, m, ASSIGN_OPERATION, r, false, null);
-    return r;
-  }
-
-  // '>' '>' '='
-  private static boolean assignOperation_10(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "assignOperation_10")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, OGREATER);
-    r = r && consumeToken(b, OGREATER);
-    r = r && consumeToken(b, OASSIGN);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // '>' '>' '>' '='
-  private static boolean assignOperation_11(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "assignOperation_11")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, OGREATER);
-    r = r && consumeToken(b, OGREATER);
-    r = r && consumeToken(b, OGREATER);
-    r = r && consumeToken(b, OASSIGN);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1349,7 +1324,7 @@ public class HaxeParser implements PsiParser {
   public static boolean compareExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "compareExpression")) return false;
     if (!nextTokenIs(b, "<compare expression>", ONOT_EQ, OLESS,
-      OLESS_OR_EQUAL, OEQ, OGREATER)) return false;
+      OLESS_OR_EQUAL, OEQ, OGREATER, OGREATER_OR_EQUAL)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _LEFT_, "<compare expression>");
     r = compareOperation(b, l + 1);
@@ -1384,31 +1359,20 @@ public class HaxeParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '==' | '!=' | '<=' | '<' | ('>' '=') | '>'
+  // '==' | '!=' | '<=' | '<' | '>=' | '>'
   public static boolean compareOperation(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "compareOperation")) return false;
     if (!nextTokenIs(b, "<compare operation>", ONOT_EQ, OLESS,
-      OLESS_OR_EQUAL, OEQ, OGREATER)) return false;
+      OLESS_OR_EQUAL, OEQ, OGREATER, OGREATER_OR_EQUAL)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<compare operation>");
     r = consumeToken(b, OEQ);
     if (!r) r = consumeToken(b, ONOT_EQ);
     if (!r) r = consumeToken(b, OLESS_OR_EQUAL);
     if (!r) r = consumeToken(b, OLESS);
-    if (!r) r = compareOperation_4(b, l + 1);
+    if (!r) r = consumeToken(b, OGREATER_OR_EQUAL);
     if (!r) r = consumeToken(b, OGREATER);
     exit_section_(b, l, m, COMPARE_OPERATION, r, false, null);
-    return r;
-  }
-
-  // '>' '='
-  private static boolean compareOperation_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "compareOperation_4")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, OGREATER);
-    r = r && consumeToken(b, OASSIGN);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1765,7 +1729,7 @@ public class HaxeParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !('!' | '!=' | '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '>' | '?' | metaKeyWord | '[' | ']' | '^' | '^=' | 'break' | 'case' | 'cast' | 'catch' | 'continue' | 'default' | 'do' | 'dynamic' | 'else' | 'false' | 'for' | 'function' | 'if' | 'inline' | 'new' | 'null' | 'override' | 'private' | 'public' | 'return' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'untyped' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | ID | LITFLOAT | LITHEX | LITINT | LITOCT | OPEN_QUOTE | CLOSING_QUOTE | MACRO_ID | REG_EXP | LONG_TEMPLATE_ENTRY_END | '=>')
+  // !('!' | '!=' | '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '>' | '>=' | '>>=' | '>>>=' | '?' | metaKeyWord | '[' | ']' | '^' | '^=' | 'break' | 'case' | 'cast' | 'catch' | 'continue' | 'default' | 'do' | 'dynamic' | 'else' | 'false' | 'for' | 'function' | 'if' | 'inline' | 'new' | 'null' | 'override' | 'private' | 'public' | 'return' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'untyped' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | ID | LITFLOAT | LITHEX | LITINT | LITOCT | OPEN_QUOTE | CLOSING_QUOTE | MACRO_ID | REG_EXP | LONG_TEMPLATE_ENTRY_END | '=>')
   static boolean expression_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expression_recover")) return false;
     boolean r;
@@ -1775,7 +1739,7 @@ public class HaxeParser implements PsiParser {
     return r;
   }
 
-  // '!' | '!=' | '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '>' | '?' | metaKeyWord | '[' | ']' | '^' | '^=' | 'break' | 'case' | 'cast' | 'catch' | 'continue' | 'default' | 'do' | 'dynamic' | 'else' | 'false' | 'for' | 'function' | 'if' | 'inline' | 'new' | 'null' | 'override' | 'private' | 'public' | 'return' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'untyped' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | ID | LITFLOAT | LITHEX | LITINT | LITOCT | OPEN_QUOTE | CLOSING_QUOTE | MACRO_ID | REG_EXP | LONG_TEMPLATE_ENTRY_END | '=>'
+  // '!' | '!=' | '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '>' | '>=' | '>>=' | '>>>=' | '?' | metaKeyWord | '[' | ']' | '^' | '^=' | 'break' | 'case' | 'cast' | 'catch' | 'continue' | 'default' | 'do' | 'dynamic' | 'else' | 'false' | 'for' | 'function' | 'if' | 'inline' | 'new' | 'null' | 'override' | 'private' | 'public' | 'return' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'untyped' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | ID | LITFLOAT | LITHEX | LITINT | LITOCT | OPEN_QUOTE | CLOSING_QUOTE | MACRO_ID | REG_EXP | LONG_TEMPLATE_ENTRY_END | '=>'
   private static boolean expression_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expression_recover_0")) return false;
     boolean r;
@@ -1811,6 +1775,9 @@ public class HaxeParser implements PsiParser {
     if (!r) r = consumeToken(b, OASSIGN);
     if (!r) r = consumeToken(b, OEQ);
     if (!r) r = consumeToken(b, OGREATER);
+    if (!r) r = consumeToken(b, OGREATER_OR_EQUAL);
+    if (!r) r = consumeToken(b, OSHIFT_RIGHT_ASSIGN);
+    if (!r) r = consumeToken(b, OUNSIGNED_SHIFT_RIGHT_ASSIGN);
     if (!r) r = consumeToken(b, OQUEST);
     if (!r) r = metaKeyWord(b, l + 1);
     if (!r) r = consumeToken(b, PLBRACK);

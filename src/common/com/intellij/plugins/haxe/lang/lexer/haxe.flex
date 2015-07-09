@@ -298,8 +298,9 @@ IDENTIFIER_NO_DOLLAR={IDENTIFIER_START_NO_DOLLAR}{IDENTIFIER_PART_NO_DOLLAR}*
 "%="                                      { return OREMAINDER_ASSIGN; }
 "%"                                       { return OREMAINDER; }
 
-//">>="                                     { return OSHIFT_RIGHT_ASSIGN; }
-//">="                                      { return OGREATER_OR_EQUAL; }
+">>>="                                    { return OUNSIGNED_SHIFT_RIGHT_ASSIGN; }
+">>="                                     { return OSHIFT_RIGHT_ASSIGN; }
+">="                                      { return OGREATER_OR_EQUAL; }
 "=>"                                      { return OFAT_ARROW; }
 ">"                                       { return OGREATER; }
 
