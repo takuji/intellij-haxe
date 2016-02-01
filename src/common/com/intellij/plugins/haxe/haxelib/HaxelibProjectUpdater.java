@@ -222,19 +222,26 @@ public class HaxelibProjectUpdater  {
       inheritedClasspaths = projectClasspaths;
     }
 
+    // TODO: would be nice to collect all `module-dependencies` libraries also
+    HaxeClasspath moduleClasspaths = HaxelibClasspathUtils.getModuleClasspath(module);
+
     class NewPathCollector implements HaxeClasspath.Lambda {
       public HaxeClasspath myUninherited = new HaxeClasspath();
+      private HaxeClasspath moduleClassPath;
       private HaxeClasspath myInherited;
-      public NewPathCollector(HaxeClasspath inherited) { myInherited = inherited; }
+      public NewPathCollector(HaxeClasspath inherited, HaxeClasspath moduleClassPath) {
+        myInherited = inherited;
+        this.moduleClassPath = moduleClassPath;
+      }
       @Override
       public boolean processEntry(HaxeClasspathEntry externalPath) {
-        if (!myInherited.contains(externalPath)) {
+        if (!myInherited.contains(externalPath) && !moduleClassPath.contains(externalPath)) {
           myUninherited.add(externalPath);
         }
         return true;
       }
     }
-    NewPathCollector npCollector = new NewPathCollector(inheritedClasspaths);
+    NewPathCollector npCollector = new NewPathCollector(inheritedClasspaths, moduleClasspaths);
     externalClasspaths.iterate(npCollector);
     HaxeClasspath uninheritedExternalClasspaths = npCollector.myUninherited;
 
