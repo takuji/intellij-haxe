@@ -26,10 +26,12 @@ import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
+import com.intellij.openapi.graph.layout.router.polyline.Path;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.plugins.haxe.haxelib.HaxelibCommandUtils;
@@ -51,6 +53,7 @@ import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.io.LocalFileFinder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -158,7 +161,8 @@ public class HaxeCompilerCompletionContributor extends CompletionContributor {
                          commandLineArguments.add(targetFlag);
 
                          stdout = HaxelibCommandUtils.getProcessStdout(commandLineArguments,
-                                                                       BuildProperties.getProjectBaseDir(project));
+                                                                       //BuildProperties.getProjectBaseDir(project));
+                                                                       new File(moduleForFile.getModuleFile().getParent().getPath()));
 
                          openFLDisplayArguments.put(moduleForFile.getModuleFilePath() + targetFlag, stdout);
                        }
