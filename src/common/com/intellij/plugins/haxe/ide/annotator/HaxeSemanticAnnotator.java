@@ -564,9 +564,25 @@ class PackageChecker {
     PsiDirectory fileDirectory = element.getContainingFile().getParent();
     List<PsiFileSystemItem> fileRange = PsiFileUtils.getRange(PsiFileUtils.findRoot(fileDirectory), fileDirectory);
     fileRange.remove(0);
-    String actualPath = PsiFileUtils.getListPath(fileRange);
+
+    // FIX: https://github.com/TiVo/intellij-haxe/issues/416
+    int stdIndex = -1;
+    int i = 0;
+    for(PsiFileSystemItem item : fileRange) {
+      if(item.getName().equalsIgnoreCase("_std")) {
+        stdIndex = i;
+        break;
+      }
+      ++i;
+    }
+    if(stdIndex >= 0) {
+      fileRange = fileRange.subList(stdIndex + 1, fileRange.size());
+    }
+
+    final String actualPath = PsiFileUtils.getListPath(fileRange);
     final String actualPackage = actualPath.replace('/', '.');
-    final String actualPackage2 = HaxeResolveUtil.getPackageName(element.getContainingFile());
+
+    //final String actualPackage2 = HaxeResolveUtil.getPackageName(element.getContainingFile());
     // @TODO: Should use HaxeResolveUtil
 
     for (String s : StringUtils.split(packageName, '.')) {
