@@ -655,13 +655,36 @@ abstract public class HaxeReferenceImpl extends HaxeExpressionImpl implements Ha
     PsiElement leftTarget = leftReference != null ? leftReference.resolve() : null;
 
     if (leftTarget instanceof PsiPackage) {
-      return ArrayUtil.mergeArrays(variants, ((PsiPackage)leftTarget).getSubPackages());
+      return addSubPackages(variants, (PsiPackage)leftTarget);
     }
     else if (leftReference == null) {
       PsiPackage rootPackage = JavaPsiFacade.getInstance(getElement().getProject()).findPackage("");
-      return rootPackage == null ? variants : ArrayUtil.mergeArrays(variants, rootPackage.getSubPackages());
+      return addSubPackages(variants, rootPackage);
     }
     return variants;
+  }
+
+  private Object[] addSubPackages(Object[] variants, PsiPackage targetPackage) {
+    if(targetPackage == null) {
+      return variants;
+    }
+    PsiPackage[] result = targetPackage.getSubPackages();
+
+    // https://github.com/TiVo/intellij-haxe/issues/416
+    // filter `_std` package
+    // TODO: remove when subPackages will be filtered?
+    int i = 0;
+    while(i < result.length) {
+      PsiPackage psiPackage = result[i];
+      if(psiPackage != null && psiPackage.getName() != null && psiPackage.getName().equals("_std")) {
+        result = ArrayUtil.remove(result, i);
+      }
+      else {
+        ++i;
+      }
+    }
+
+    return result.length > 0 ? ArrayUtil.mergeArrays(variants, result) : variants;
   }
 
   private void addImportStatementWithWildcardTypeClassVariants(Set<HaxeComponentName> suggestedVariants, PsiFile psiFile) {

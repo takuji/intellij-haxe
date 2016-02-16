@@ -864,4 +864,30 @@ public class HaxeResolveUtil {
   public static HaxeParameterListPsiMixinImpl toHaxePsiParameterList(HaxeParameterList haxeParameterList) {
     return new HaxeParameterListPsiMixinImpl(haxeParameterList.getNode());
   }
+
+  public static String getPackageFromElementFilePath(PsiElement element) {
+    if(element == null) {
+      return "";
+    }
+    PsiDirectory fileDirectory = element.getContainingFile().getParent();
+    List<PsiFileSystemItem> fileRange = PsiFileUtils.getRange(PsiFileUtils.findRoot(fileDirectory), fileDirectory);
+    fileRange.remove(0);
+
+    // FIX: https://github.com/TiVo/intellij-haxe/issues/416
+    int stdIndex = -1;
+    int i = 0;
+    for(PsiFileSystemItem item : fileRange) {
+      if(item.getName().equalsIgnoreCase("_std")) {
+        stdIndex = i;
+        break;
+      }
+      ++i;
+    }
+    if(stdIndex >= 0) {
+      fileRange = fileRange.subList(stdIndex + 1, fileRange.size());
+    }
+
+    final String actualPath = PsiFileUtils.getListPath(fileRange);
+    return actualPath.replace('/', '.');
+  }
 }

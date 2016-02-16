@@ -560,36 +560,15 @@ class MethodChecker {
 class PackageChecker {
   static public void check(final HaxePackageStatement element, final AnnotationHolder holder) {
     final HaxeReferenceExpression expression = element.getReferenceExpression();
-    String packageName = (expression != null) ? expression.getText() : "";
-    PsiDirectory fileDirectory = element.getContainingFile().getParent();
-    List<PsiFileSystemItem> fileRange = PsiFileUtils.getRange(PsiFileUtils.findRoot(fileDirectory), fileDirectory);
-    fileRange.remove(0);
-
-    // FIX: https://github.com/TiVo/intellij-haxe/issues/416
-    int stdIndex = -1;
-    int i = 0;
-    for(PsiFileSystemItem item : fileRange) {
-      if(item.getName().equalsIgnoreCase("_std")) {
-        stdIndex = i;
-        break;
-      }
-      ++i;
-    }
-    if(stdIndex >= 0) {
-      fileRange = fileRange.subList(stdIndex + 1, fileRange.size());
-    }
-
-    final String actualPath = PsiFileUtils.getListPath(fileRange);
-    final String actualPackage = actualPath.replace('/', '.');
-
-    //final String actualPackage2 = HaxeResolveUtil.getPackageName(element.getContainingFile());
-    // @TODO: Should use HaxeResolveUtil
+    final String packageName = (expression != null) ? expression.getText() : "";
+    final String actualPackage = HaxeResolveUtil.getPackageFromElementFilePath(element);
 
     for (String s : StringUtils.split(packageName, '.')) {
       if (!s.substring(0, 1).toLowerCase().equals(s.substring(0, 1))) {
         //HaxeSemanticError.addError(element, new HaxeSemanticError("Package name '" + s + "' must start with a lower case character"));
         // @TODO: Move to bundle
         holder.createErrorAnnotation(element, "Package name '" + s + "' must start with a lower case character");
+        break;
       }
     }
 
