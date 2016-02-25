@@ -24,6 +24,8 @@ import com.intellij.plugins.haxe.lang.lexer.HaxeTokenTypes;
 import com.intellij.plugins.haxe.lang.psi.*;
 import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocComment;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.apache.log4j.Level;
@@ -62,25 +64,16 @@ public abstract class HaxePsiFieldImpl extends AbstractHaxeNamedComponent implem
   }
 
   @Override
-  @NotNull
+  @Nullable
   public HaxeComponentName getComponentName() {
-    return new HaxeComponentNameImpl(getNode());
-    ////this.getName();
-    //return findNotNullChildByClass(HaxeComponentName.class);
+    return null;
   }
 
   @Nullable
   @Override
   public PsiIdentifier getNameIdentifier() {
-    PsiIdentifier foundName = null;
-    ASTNode node = getNode();
-    if (null != node) {
-      ASTNode element = node.findChildByType(HaxeTokenTypes.IDENTIFIER);
-      if (null != element) {
-        foundName = (PsiIdentifier) element.getPsi();
-      }
-    }
-    return foundName;
+    HaxeComponentName name = getComponentName();
+    return name != null ? name.getIdentifier() : null;
   }
 
   @Nullable
@@ -213,4 +206,19 @@ public abstract class HaxePsiFieldImpl extends AbstractHaxeNamedComponent implem
     return this.getModifierList().hasModifierProperty(name);
   }
 
+  @NotNull
+  @Override
+  public SearchScope getUseScope() {
+    final PsiElement parent = getParent();
+    if(parent != null) {
+      if (this instanceof HaxeLocalVarDeclarationPart) {
+        // parent of local var declaration-Part
+        return new LocalSearchScope(parent.getParent());
+      }
+      else if (this instanceof HaxeLocalVarDeclaration) {
+        return new LocalSearchScope(parent);
+      }
+    }
+    return super.getUseScope();
+  }
 }
