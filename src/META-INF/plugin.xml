@@ -44,6 +44,7 @@
         <li>General "@:enum abstract" support (issues #427, #428, #429)</li>
         <li>Fix typedef generic params resolving (issue #304)</li>
         <li>Fix generic sub-type resolving when import just type-module (issue #435)</li>
+        <li>Fix interface properties accessor check annotation (issue #411)</li>
       </ul>
       <p>0.9.9: (community release)</p>
       <ul>
