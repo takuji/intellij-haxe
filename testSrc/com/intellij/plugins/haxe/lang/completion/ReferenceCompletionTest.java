@@ -229,6 +229,11 @@ public class ReferenceCompletionTest extends HaxeCompletionTestBase {
     doTestInclude();
   }
 
+  public void testImportGenericSubType() throws Throwable {
+    myFixture.configureByFiles("ImportGenericSubType.hx", "generic1/ClassWithGenericSubClass.hx", "std/StdTypes.hx");
+    doTestVariantsInner("ImportGenericSubType.txt");
+  }
+
   public void testNullTypedef() throws Throwable {
     myFixture.configureByFiles("NullTypedef.hx", "std/StdTypes.hx", "std/String.hx");
     doTestVariantsInner("NullTypedef.txt");
@@ -237,11 +242,6 @@ public class ReferenceCompletionTest extends HaxeCompletionTestBase {
   public void testRefTypedef() throws Throwable {
     myFixture.configureByFiles("RefTypedef.hx", "std/String.hx");
     doTestVariantsInner("RefTypedef.txt");
-  }
-
-  public void testImportGenericSubType() throws Throwable {
-    myFixture.configureByFiles("ImportGenericSubType.hx", "generic1/ClassWithGenericSubClass.hx", "std/StdTypes.hx");
-    doTestVariantsInner("ImportGenericSubType.txt");
   }
 
   public void testAbstractEnumFields() throws Throwable {
@@ -254,6 +254,22 @@ public class ReferenceCompletionTest extends HaxeCompletionTestBase {
 
   public void testAbstractEnumFields3() throws Throwable {
     doTestInclude("com/util/SampleAbstractEnum.hx");
+  }
+
+  public void testAbstractForward() throws Throwable {
+    doTestInclude("com/util/UnderlyingType.hx");
+  }
+
+  public void testAbstractForward1() throws Throwable {
+    doTestInclude("com/util/UnderlyingType.hx");
+  }
+
+  public void testAbstractForward2() throws Throwable {
+    doTestInclude("com/util/UnderlyingType.hx");
+  }
+
+  public void testAbstractForward3() throws Throwable {
+    doTestInclude("com/util/UnderlyingType.hx");
   }
 
   //public void testUsingStringTools() throws Throwable {

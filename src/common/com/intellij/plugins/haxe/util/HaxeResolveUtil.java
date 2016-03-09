@@ -424,7 +424,7 @@ public class HaxeResolveUtil {
     if (element instanceof HaxeComponentName) {
       return getHaxeClassResolveResult(element.getParent(), specialization);
     }
-    if (element instanceof HaxeTypedefDeclaration) {
+    if (element instanceof AbstractHaxeTypeDefImpl) {
       final AbstractHaxeTypeDefImpl typeDef = (AbstractHaxeTypeDefImpl)element;
       return typeDef.getTargetClass(specialization);
     }
@@ -881,6 +881,10 @@ public class HaxeResolveUtil {
 
   public static HaxeParameterListPsiMixinImpl toHaxePsiParameterList(HaxeParameterList haxeParameterList) {
     return new HaxeParameterListPsiMixinImpl(haxeParameterList.getNode());
+  }
+
+  public static HashSet<HaxeClass> getBaseClassesSet(@NotNull HaxeClass clazz) {
+    return getBaseClassesSet(clazz, new HashSet<HaxeClass>());
   }
 
   @NotNull
