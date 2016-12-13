@@ -65,7 +65,7 @@
 
   <!-- If nothing else, assume that the IDEA installation is in a subdirectory
        of the project.  This is the case when building on Travis.ci, for example. -->
-  <property name="idea.ultimate.build" location="/Applications/IntelliJ IDEA.app/Contents/" />
+  <property name="idea.ultimate.build" location="/Applications/IntelliJ IDEA 2016.3.app/Contents/" />
 
 
   <echo level="debug">idea.ultimate.build is set to "${idea.ultimate.build}"</echo>
@@ -123,6 +123,7 @@
       // Lookup table for properties files.  Add new versions here.
       var propertiesFile = "";
       switch(parseInt(codeLine, 10)) {
+        case 163:   propertiesFile = "idea_v16.properties";   break;
         case 162:   propertiesFile = "idea_v16.properties";   break;
         case 145:   propertiesFile = "idea_v16.properties";   break;
         case 143:   propertiesFile = "idea_v15.properties";   break;
